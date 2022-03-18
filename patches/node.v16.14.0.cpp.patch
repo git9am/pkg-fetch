@@ -5,7 +5,7 @@
              }],
              ['llvm_version=="0.0"', {
 -              'lto': ' -flto=4 -fuse-linker-plugin -ffat-lto-objects ', # GCC
-+              'lto': ' -flto=4 -ffat-lto-objects ', # GCC
++              'lto': ' -fno-lto -ffat-lto-objects ', # GCC
              }, {
                'lto': ' -flto ', # Clang
              }],
@@ -208,7 +208,7 @@ index 0000000000..fb2d47f52b
    if (expandArgv1 && process.argv[1] &&
 -      !StringPrototypeStartsWith(process.argv[1], '-')) {
 +      !StringPrototypeStartsWith(process.argv[1], '-') &&
-+      process.argv[1] !== 'PKG_DUMMY_ENTRYPOINT') {
++      process.argv[process.argv.length - 1] !== 'PKG_DUMMY_ENTRYPOINT') {
      // Expand process.argv[1] into a full path.
      const path = require('path');
      try {
@@ -469,12 +469,12 @@ index 0000000000..fb2d47f52b
 +  nargv[0] = argv[0];
 +  int c = load_baked(nargv);
 +
-+  if (should_set_dummy()) {
-+    nargv[c++] = (char*) "PKG_DUMMY_ENTRYPOINT";
-+  }
-+
 +  for (int i = 1; i < argc; i++) {
 +    nargv[c++] = argv[i];
++  }
++
++  if (should_set_dummy()) {
++    nargv[c++] = (char*) "PKG_DUMMY_ENTRYPOINT";
 +  }
 +
 +  return adjacent(c, nargv);
